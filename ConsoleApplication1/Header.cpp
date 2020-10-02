@@ -43,7 +43,69 @@ void updateSortie(t_sortie& s, t_piece p)
 void simuler(int duree, int DA, int DT, t_systeme& systeme,
 	System::Windows::Forms::RichTextBox^ zone)
 {
-	for (int i = 1; i <= 100000; i++) {
-		System::Windows::Forms::Application::DoEvents();
+	//System::Windows::Forms::Application::DoEvents();
+
+	/* INITIALISATION */
+	const int INF = duree + 10;
+	t_entree e = { OCCUPEE };
+	t_sortie s = { 0 };
+	t_file f = { 0 };
+	t_machine m = { VIDE };
+	t_piece pieces[TAILLE_FILE] = { 0 }; // nb pièces passant par entrée
+	e.dateProchainEvenement = DT;
+	m.dateProchainEvenement = INF;
+
+	/* DEBUT SIMULATION */
+	int dateSimulation = 0, dateFin = INF;
+	int imin = 1;
+	int iPiece = 0;
+	e.contenu = pieces[iPiece];
+	while (dateSimulation < duree) {
+		// chercher entité avec DPE min
+		if (e.dateProchainEvenement < m.dateProchainEvenement) {
+			imin = 1;
+		}
+		else {
+			imin = 2;
+		}
+
+		// si DPE min dans l'entrée
+		if (imin == 1) {
+			dateSimulation = e.dateProchainEvenement;
+			if (estPleine(f)) {
+				e.etat = BLOQUEE;
+				e.nbPiecesPerdues++;
+				e.dateProchainEvenement = INF;
+			}
+			else {
+				t_piece p = retirer(e);
+				p.dateEntreeFile = dateSimulation;
+				e.etat = VIDE;
+				e.dateProchainEvenement = dateSimulation + DA;
+				e.contenu = pieces[++iPiece];
+				poser(f, p);
+			}
+		}
+
+		// si DPE min dans la machine
+		if (imin == 2) {
+			dateSimulation = m.dateProchainEvenement;
+			t_piece p = retirer(m);
+			p.dateSortieSys = dateSimulation;
+			m.etat = VIDE;
+			if (estVide(f)) {
+				m.dateProchainEvenement = INF;
+			}
+			else {
+				t_piece p = retirer(f);
+				p.dateSortieFile = dateSimulation;
+				p.dateEntreeMachine = dateSimulation;
+				if (e.etat == BLOQUEE) {
+					e.dateProchainEvenement = dateSimulation;
+				}
+				poser(m, p);
+				m.dateProchainEvenement = dateSimulation + DT;
+			}
+		}
 	}
 }
