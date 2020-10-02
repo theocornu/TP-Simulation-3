@@ -72,9 +72,9 @@ namespace ConsoleApplication1 {
 		/// </summary>
 		void InitializeComponent(void)
 		{
-			System::Windows::Forms::DataVisualization::Charting::ChartArea^  chartArea1 = (gcnew System::Windows::Forms::DataVisualization::Charting::ChartArea());
-			System::Windows::Forms::DataVisualization::Charting::Legend^  legend1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Legend());
-			System::Windows::Forms::DataVisualization::Charting::Series^  series1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
+			System::Windows::Forms::DataVisualization::Charting::ChartArea^  chartArea2 = (gcnew System::Windows::Forms::DataVisualization::Charting::ChartArea());
+			System::Windows::Forms::DataVisualization::Charting::Legend^  legend2 = (gcnew System::Windows::Forms::DataVisualization::Charting::Legend());
+			System::Windows::Forms::DataVisualization::Charting::Series^  series2 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
@@ -92,7 +92,7 @@ namespace ConsoleApplication1 {
 			// label1
 			// 
 			this->label1->AutoSize = true;
-			this->label1->Location = System::Drawing::Point(446, 55);
+			this->label1->Location = System::Drawing::Point(462, 15);
 			this->label1->Name = L"label1";
 			this->label1->Size = System::Drawing::Size(111, 13);
 			this->label1->TabIndex = 0;
@@ -101,7 +101,7 @@ namespace ConsoleApplication1 {
 			// label2
 			// 
 			this->label2->AutoSize = true;
-			this->label2->Location = System::Drawing::Point(446, 95);
+			this->label2->Location = System::Drawing::Point(462, 55);
 			this->label2->Name = L"label2";
 			this->label2->Size = System::Drawing::Size(91, 13);
 			this->label2->TabIndex = 1;
@@ -109,21 +109,21 @@ namespace ConsoleApplication1 {
 			// 
 			// textBox1
 			// 
-			this->textBox1->Location = System::Drawing::Point(563, 52);
+			this->textBox1->Location = System::Drawing::Point(579, 12);
 			this->textBox1->Name = L"textBox1";
 			this->textBox1->Size = System::Drawing::Size(100, 20);
 			this->textBox1->TabIndex = 2;
 			// 
 			// textBox2
 			// 
-			this->textBox2->Location = System::Drawing::Point(563, 92);
+			this->textBox2->Location = System::Drawing::Point(579, 52);
 			this->textBox2->Name = L"textBox2";
 			this->textBox2->Size = System::Drawing::Size(100, 20);
 			this->textBox2->TabIndex = 3;
 			// 
 			// textBox4
 			// 
-			this->textBox4->Location = System::Drawing::Point(563, 140);
+			this->textBox4->Location = System::Drawing::Point(579, 92);
 			this->textBox4->Name = L"textBox4";
 			this->textBox4->Size = System::Drawing::Size(100, 20);
 			this->textBox4->TabIndex = 10;
@@ -131,7 +131,7 @@ namespace ConsoleApplication1 {
 			// label4
 			// 
 			this->label4->AutoSize = true;
-			this->label4->Location = System::Drawing::Point(446, 143);
+			this->label4->Location = System::Drawing::Point(462, 95);
 			this->label4->Name = L"label4";
 			this->label4->Size = System::Drawing::Size(100, 13);
 			this->label4->TabIndex = 9;
@@ -167,24 +167,24 @@ namespace ConsoleApplication1 {
 			// 
 			// chart1
 			// 
-			chartArea1->Name = L"ChartArea1";
-			this->chart1->ChartAreas->Add(chartArea1);
-			legend1->Name = L"Legend1";
-			this->chart1->Legends->Add(legend1);
-			this->chart1->Location = System::Drawing::Point(12, 253);
+			chartArea2->Name = L"ChartArea1";
+			this->chart1->ChartAreas->Add(chartArea2);
+			legend2->Name = L"Legend1";
+			this->chart1->Legends->Add(legend2);
+			this->chart1->Location = System::Drawing::Point(12, 398);
 			this->chart1->Name = L"chart1";
-			series1->ChartArea = L"ChartArea1";
-			series1->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::Line;
-			series1->Legend = L"Legend1";
-			series1->Name = L"Series1";
-			this->chart1->Series->Add(series1);
-			this->chart1->Size = System::Drawing::Size(514, 327);
+			series2->ChartArea = L"ChartArea1";
+			series2->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::Line;
+			series2->Legend = L"Legend1";
+			series2->Name = L"Series1";
+			this->chart1->Series->Add(series2);
+			this->chart1->Size = System::Drawing::Size(432, 291);
 			this->chart1->TabIndex = 14;
 			this->chart1->Text = L"chart1";
 			// 
 			// button1
 			// 
-			this->button1->Location = System::Drawing::Point(563, 550);
+			this->button1->Location = System::Drawing::Point(12, 362);
 			this->button1->Name = L"button1";
 			this->button1->Size = System::Drawing::Size(128, 30);
 			this->button1->TabIndex = 15;
@@ -266,9 +266,6 @@ namespace ConsoleApplication1 {
 		simuler(duree, DA, DT, systeme, richTextBox2);
 	}
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
-		//chart1->Series[0]->Points->AddXY(10, 20);
-		//chart1->Series[0]->Points->AddXY(100, 200);
-
 		float x = .1, y = 0;
 		while (x <= 10) {
 			y = cos(x);
