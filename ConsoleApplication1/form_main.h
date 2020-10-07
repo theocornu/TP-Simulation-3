@@ -72,9 +72,9 @@ namespace ConsoleApplication1 {
 		/// </summary>
 		void InitializeComponent(void)
 		{
-			System::Windows::Forms::DataVisualization::Charting::ChartArea^  chartArea2 = (gcnew System::Windows::Forms::DataVisualization::Charting::ChartArea());
-			System::Windows::Forms::DataVisualization::Charting::Legend^  legend2 = (gcnew System::Windows::Forms::DataVisualization::Charting::Legend());
-			System::Windows::Forms::DataVisualization::Charting::Series^  series2 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
+			System::Windows::Forms::DataVisualization::Charting::ChartArea^  chartArea1 = (gcnew System::Windows::Forms::DataVisualization::Charting::ChartArea());
+			System::Windows::Forms::DataVisualization::Charting::Legend^  legend1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Legend());
+			System::Windows::Forms::DataVisualization::Charting::Series^  series1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
@@ -149,6 +149,7 @@ namespace ConsoleApplication1 {
 			// 
 			// richTextBox2
 			// 
+			this->richTextBox2->Enabled = false;
 			this->richTextBox2->Location = System::Drawing::Point(832, 12);
 			this->richTextBox2->Name = L"richTextBox2";
 			this->richTextBox2->Size = System::Drawing::Size(364, 279);
@@ -167,17 +168,17 @@ namespace ConsoleApplication1 {
 			// 
 			// chart1
 			// 
-			chartArea2->Name = L"ChartArea1";
-			this->chart1->ChartAreas->Add(chartArea2);
-			legend2->Name = L"Legend1";
-			this->chart1->Legends->Add(legend2);
+			chartArea1->Name = L"ChartArea1";
+			this->chart1->ChartAreas->Add(chartArea1);
+			legend1->Name = L"Legend1";
+			this->chart1->Legends->Add(legend1);
 			this->chart1->Location = System::Drawing::Point(12, 398);
 			this->chart1->Name = L"chart1";
-			series2->ChartArea = L"ChartArea1";
-			series2->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::Line;
-			series2->Legend = L"Legend1";
-			series2->Name = L"Series1";
-			this->chart1->Series->Add(series2);
+			series1->ChartArea = L"ChartArea1";
+			series1->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::Line;
+			series1->Legend = L"Legend1";
+			series1->Name = L"Series1";
+			this->chart1->Series->Add(series1);
 			this->chart1->Size = System::Drawing::Size(432, 291);
 			this->chart1->TabIndex = 14;
 			this->chart1->Text = L"chart1";
@@ -248,29 +249,43 @@ namespace ConsoleApplication1 {
 
 
 	}*/
+	/* BOUTON "QUITTER" */
 	private: System::Void button2_Click_1(System::Object^  sender, System::EventArgs^  e) {
 		this->Close();
 	}
+	/* BOUTON "LANCER SIMULATION" */
 	private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e) {
+		richTextBox2->Text = ""; // nettoyage
 		// 1) lire la durée de la simulation
-		int duree = 1000;
+		int duree = 0;
+		if (textBox1->Text != "")
+			duree = int::Parse(textBox1->Text);
 		// 2) lire la durée interarrivée
-		int DA = 10;
+		int DA = 0;
+		if (textBox2->Text != "")
+			DA = int::Parse(textBox2->Text);
 		// 3) lire la durée de traitement
-		int DT = 100;
+		int DT = 0;
+		if (textBox4->Text != "")
+			DT = int::Parse(textBox4->Text);
+
+		String^ text;
+		text += "" + duree + " " + DA + " " + DT + "\n";
+		richTextBox2->AppendText(text);
 
 		t_systeme systeme;
 
 
-		richTextBox2->Text = "Lancement de la simulation...";
+		//richTextBox2->Text = "Lancement de la simulation...";
 		simuler(duree, DA, DT, systeme, richTextBox2);
 	}
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
+		chart1->Series[0]->Points->Clear(); // nettoyage
 		float x = .1, y = 0;
 		while (x <= 10) {
 			y = cos(x);
 			chart1->Series[0]->Points->AddXY(x, y);
-			x = x + .1;
+			x = x + .1f;
 		}
 	}
 };

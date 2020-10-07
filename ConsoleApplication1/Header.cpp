@@ -1,4 +1,5 @@
 #include "Header.h"
+#include <string>
 
 bool estPleine(const t_file& f) {
 	return (f.fin + 1) % TAILLE_FILE == f.debut;
@@ -55,7 +56,11 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme,
 	e.dateProchainEvenement = DT;
 	m.dateProchainEvenement = INF;
 
-	/* DEBUT SIMULATION */
+	for (int i = 0; i < TAILLE_FILE; i++) {
+		pieces[i].num = i;
+	}
+
+	/* SIMULATION */
 	int dateSimulation = 0, dateFin = INF;
 	int imin = 1;
 	int iPiece = 0;
@@ -82,7 +87,8 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme,
 				p.dateEntreeFile = dateSimulation;
 				e.etat = VIDE;
 				e.dateProchainEvenement = dateSimulation + DA;
-				e.contenu = pieces[++iPiece];
+				iPiece++;
+				e.contenu = pieces[iPiece];
 				poser(f, p);
 			}
 		}
@@ -108,4 +114,7 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme,
 			}
 		}
 	}
+	/* CALCUL DES TEMPS MOYENS */
+	/* AFFICHAGE STATS PIECES */
+
 }
