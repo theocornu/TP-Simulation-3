@@ -52,18 +52,18 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme,
 	t_sortie s = { 0 };
 	t_file f = { 0 };
 	t_machine m = { VIDE };
-	t_piece pieces[TAILLE_FILE] = { 0 }; // nb pièces passant par entrée
+	t_piece pieces[TAILLE_FILE+1] = { 0 }; // nb pièces passant par entrée
 	e.dateProchainEvenement = DT;
 	m.dateProchainEvenement = INF;
 
-	for (int i = 0; i < TAILLE_FILE; i++) {
+	for (int i = 0; i <= TAILLE_FILE; i++) {
 		pieces[i].num = i;
 	}
 
 	/* SIMULATION */
 	int dateSimulation = 0, dateFin = INF;
 	int imin = 1;
-	int iPiece = 0;
+	int iPiece = 1;
 	e.contenu = pieces[iPiece];
 	while (dateSimulation < duree) {
 		// chercher entité avec DPE min
@@ -116,5 +116,11 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme,
 	}
 	/* CALCUL DES TEMPS MOYENS */
 	/* AFFICHAGE STATS PIECES */
-
+	for (int i = 0; i < TAILLE_FILE; i++) {
+		System::String^ data;
+		data += "" + pieces[i].num + " " + pieces[i].dateEntreeSys + " " + pieces[i].dateSortieSys + "\n";
+		zone->AppendText(data);
+		data = "";
+	}
+	zone->AppendText("Fin de simulation.");
 }

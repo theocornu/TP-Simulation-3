@@ -256,28 +256,25 @@ namespace ConsoleApplication1 {
 	/* BOUTON "LANCER SIMULATION" */
 	private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e) {
 		richTextBox2->Text = ""; // nettoyage
-		// 1) lire la durée de la simulation
-		int duree = 0;
-		if (textBox1->Text != "")
+		if (textBox1->Text == "" || textBox2->Text == "" || textBox4->Text == "") {
+			richTextBox2->Text = "Veuillez remplir chaque paramètre ci-contre.";
+		}
+		else {
+			// 1) lire la durée de la simulation
+			int duree = 0;
 			duree = int::Parse(textBox1->Text);
-		// 2) lire la durée interarrivée
-		int DA = 0;
-		if (textBox2->Text != "")
+			// 2) lire la durée interarrivée
+			int DA = 0;
 			DA = int::Parse(textBox2->Text);
-		// 3) lire la durée de traitement
-		int DT = 0;
-		if (textBox4->Text != "")
+			// 3) lire la durée de traitement
+			int DT = 0;
 			DT = int::Parse(textBox4->Text);
 
-		String^ text;
-		text += "" + duree + " " + DA + " " + DT + "\n";
-		richTextBox2->AppendText(text);
+			t_systeme systeme;
 
-		t_systeme systeme;
-
-
-		//richTextBox2->Text = "Lancement de la simulation...";
-		simuler(duree, DA, DT, systeme, richTextBox2);
+			richTextBox2->Text = "Lancement de la simulation...\n";
+			simuler(duree, DA, DT, systeme, richTextBox2);
+		}
 	}
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
 		chart1->Series[0]->Points->Clear(); // nettoyage
