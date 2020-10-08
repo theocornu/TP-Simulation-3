@@ -9,20 +9,20 @@ bool estVide(const t_file& f) {
 	return f.debut == f.fin;
 }
 
-t_piece retirer(t_file& f) {
-	t_piece piece = f.liste[f.debut];
+int retirer(t_file& f) {
+	int piece = f.liste[f.debut].num;
 	f.debut = (f.debut + 1) % TAILLE_FILE;
 	return piece;
 }
 
-t_piece retirer(t_machine& m) {
+int retirer(t_machine& m) {
 	m.etat = VIDE;
-	return m.contenu;
+	return m.contenu.num;
 }
 
-t_piece retirer(t_entree& e) {
+int retirer(t_entree& e) {
 	e.etat = VIDE;
-	return e.contenu;
+	return e.contenu.num;
 }
 
 void poser(t_file& f, t_piece p) {
@@ -35,11 +35,6 @@ void poser(t_machine& m, t_piece p) {
 	m.etat = OCCUPEE;
 }
 
-void updateSortie(t_sortie& s, t_piece p)
-{
-	s.nbPieceSortie++;
-}
-
 
 void simuler(int duree, int DA, int DT, t_systeme& systeme,
 	System::Windows::Forms::RichTextBox^ zone)
@@ -48,15 +43,16 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme,
 
 	/* INITIALISATION */
 	const int INF = duree + 10;
+	const int NBPIECES = 15;
 	t_entree e = { OCCUPEE };
 	t_sortie s = { 0 };
 	t_file f = { 0 };
 	t_machine m = { VIDE };
-	t_piece pieces[TAILLE_FILE+1] = { 0 }; // nb pièces passant par entrée
-	e.dateProchainEvenement = DT;
+	t_piece pieces[NBPIECES+1] = { 0 }; // nb pièces passant par entrée
+	e.dateProchainEvenement = DA;
 	m.dateProchainEvenement = INF;
 
-	for (int i = 0; i <= TAILLE_FILE; i++) {
+	for (int i = 0; i <= NBPIECES; i++) {
 		pieces[i].num = i;
 	}
 
@@ -76,50 +72,69 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme,
 
 		// si DPE min dans l'entrée
 		if (imin == 1) {
+			pieces[iPiece].dateEntreeSys = dateSimulation;
 			dateSimulation = e.dateProchainEvenement;
 			if (estPleine(f)) {
 				e.etat = BLOQUEE;
 				e.nbPiecesPerdues++;
 				e.dateProchainEvenement = INF;
 			}
+			else if (estVide(f)) {
+				m.contenu = e.contenu;
+				m.etat = OCCUPEE;
+				m.dateProchainEvenement = dateSimulation + DT;
+			}
 			else {
-				t_piece p = retirer(e);
-				p.dateEntreeFile = dateSimulation;
+				int numPiece = retirer(e);
 				e.etat = VIDE;
 				e.dateProchainEvenement = dateSimulation + DA;
+				poser(f, pieces[numPiece]);
+				pieces[numPiece].dateEntreeFile = dateSimulation;
+			}
+
+			if (iPiece < NBPIECES) {
 				iPiece++;
 				e.contenu = pieces[iPiece];
-				poser(f, p);
+			}
+			else {
+				e.dateProchainEvenement = INF;
 			}
 		}
 
 		// si DPE min dans la machine
 		if (imin == 2) {
 			dateSimulation = m.dateProchainEvenement;
-			t_piece p = retirer(m);
-			p.dateSortieSys = dateSimulation;
+			int numPiece = retirer(m);
+			pieces[numPiece].dateSortieMachine = dateSimulation;
+			pieces[numPiece].dateSortieSys = dateSimulation;
+			s.nbPieceSortie++;
 			m.etat = VIDE;
 			if (estVide(f)) {
 				m.dateProchainEvenement = INF;
 			}
 			else {
-				t_piece p = retirer(f);
-				p.dateSortieFile = dateSimulation;
-				p.dateEntreeMachine = dateSimulation;
+				int numPiece = retirer(f);
+				pieces[numPiece].dateSortieFile = dateSimulation;
+				pieces[numPiece].dateEntreeMachine = dateSimulation;
 				if (e.etat == BLOQUEE) {
 					e.dateProchainEvenement = dateSimulation;
 				}
-				poser(m, p);
+				poser(m, pieces[numPiece]);
+				m.etat = OCCUPEE;
 				m.dateProchainEvenement = dateSimulation + DT;
 			}
 		}
 	}
 	/* CALCUL DES TEMPS MOYENS */
 	/* AFFICHAGE STATS PIECES */
-	for (int i = 0; i < TAILLE_FILE; i++) {
+	for (int i = 1; i <= NBPIECES; i++) {
 		System::String^ donneePiece = "" + pieces[i].num + " " + 
 			pieces[i].dateEntreeSys + " " + pieces[i].dateSortieSys + "\n";
 		zone->AppendText(donneePiece);
 	}
+	/*System::String^ nbPiecesPerdue = "" + e.nbPiecesPerdues + "\n";
+	zone->AppendText(nbPiecesPerdue);
+	System::String^ nbPieceSortie = "" + s.nbPieceSortie + "\n";
+	zone->AppendText(nbPieceSortie);*/
 	zone->AppendText("Fin de simulation.");
 }

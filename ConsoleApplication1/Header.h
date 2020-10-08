@@ -63,13 +63,12 @@ typedef struct t_systeme{
 }t_systeme;
 
 
-t_piece retirer(t_entree& e);
-t_piece retirer(t_machine& m);
-t_piece retirer(t_file& f);
+int retirer(t_entree& e);
+int retirer(t_machine& m);
+int retirer(t_file& f);
 bool estPleine(const t_file& f);
 bool estVide(const t_file& f);
 void poser(t_file& f, t_piece p);
 void poser(t_machine& m, t_piece p);
-void updateSortie(t_sortie& s, t_piece p);
 void simuler(int duree, int DA, int DT, t_systeme& systeme, 
 	System::Windows::Forms::RichTextBox^ zone);
