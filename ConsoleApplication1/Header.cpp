@@ -43,13 +43,13 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme,
 
 	/* INITIALISATION */
 	const int INF = duree + 10;
-	const int NBPIECES = 15;
+	const int NBPIECES = 17;
 	t_entree e = { OCCUPEE };
 	t_sortie s = { 0 };
 	t_file f = { 0 };
 	t_machine m = { VIDE };
 	t_piece pieces[NBPIECES+1] = { 0 }; // nb pièces passant par entrée
-	e.dateProchainEvenement = DA;
+	e.dateProchainEvenement = 0;
 	m.dateProchainEvenement = INF;
 
 	for (int i = 0; i <= NBPIECES; i++) {
@@ -57,7 +57,7 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme,
 	}
 
 	/* SIMULATION */
-	int dateSimulation = 0, dateFin = INF;
+	int dateSimulation = 0;
 	int imin = 1;
 	int iPiece = 1;
 	e.contenu = pieces[iPiece];
@@ -65,26 +65,33 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme,
 		// chercher entité avec DPE min
 		if (e.dateProchainEvenement < m.dateProchainEvenement) {
 			imin = 1;
+			dateSimulation = e.dateProchainEvenement;
 		}
 		else {
 			imin = 2;
+			dateSimulation = m.dateProchainEvenement;
 		}
 
 		// si DPE min dans l'entrée
 		if (imin == 1) {
 			pieces[iPiece].dateEntreeSys = dateSimulation;
-			dateSimulation = e.dateProchainEvenement;
+			// Tests sur la file
 			if (estPleine(f)) {
+				// entrée bloquée
 				e.etat = BLOQUEE;
 				e.nbPiecesPerdues++;
 				e.dateProchainEvenement = INF;
 			}
-			else if (estVide(f)) {
-				m.contenu = e.contenu;
-				m.etat = OCCUPEE;
+			else if (m.etat == VIDE) {
+				// la pièce va directement sur la machine
+				int numPiece = retirer(e);
+				e.dateProchainEvenement = dateSimulation + DA;
+				poser(m, pieces[numPiece]);
+				pieces[numPiece].dateEntreeMachine = dateSimulation;
 				m.dateProchainEvenement = dateSimulation + DT;
 			}
 			else {
+				// la pièce passe en file d'attente
 				int numPiece = retirer(e);
 				e.etat = VIDE;
 				e.dateProchainEvenement = dateSimulation + DA;
@@ -92,6 +99,7 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme,
 				pieces[numPiece].dateEntreeFile = dateSimulation;
 			}
 
+			// Ajout de nouvelle pièce dans l'entrée
 			if (iPiece < NBPIECES) {
 				iPiece++;
 				e.contenu = pieces[iPiece];
@@ -103,12 +111,13 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme,
 
 		// si DPE min dans la machine
 		if (imin == 2) {
-			dateSimulation = m.dateProchainEvenement;
-			int numPiece = retirer(m);
-			pieces[numPiece].dateSortieMachine = dateSimulation;
-			pieces[numPiece].dateSortieSys = dateSimulation;
-			s.nbPieceSortie++;
-			m.etat = VIDE;
+			if (m.etat == OCCUPEE) {
+				int numPiece = retirer(m);
+				pieces[numPiece].dateSortieMachine = dateSimulation;
+				pieces[numPiece].dateSortieSys = dateSimulation;
+				s.nbPieceSortie++;
+				m.etat = VIDE;
+			}
 			if (estVide(f)) {
 				m.dateProchainEvenement = INF;
 			}
@@ -126,15 +135,28 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme,
 		}
 	}
 	/* CALCUL DES TEMPS MOYENS */
+	int tpsTotFile = 0, tpsTotMachine = 0, tpsTotSys = 0;
+	for (int i = 1; i <= NBPIECES; i++) {
+		t_piece p = pieces[i];
+		// si la pièce n'a pas été perdue
+		if (p.dateSortieSys != 0) {
+			tpsTotFile += (p.dateSortieFile - p.dateEntreeFile);
+			tpsTotMachine += (p.dateSortieMachine - p.dateEntreeMachine);
+			tpsTotSys += (p.dateSortieSys - p.dateEntreeSys);
+		}
+	}
+	tpsTotFile /= s.nbPieceSortie;
+	tpsTotMachine /= s.nbPieceSortie;
+	tpsTotSys /= s.nbPieceSortie;
 	/* AFFICHAGE STATS PIECES */
+	System::String^ donneeSysteme = "TempsMoyenDeSejourDansLeSysteme = " +
+		tpsTotSys + "\n" + "TempsMoyenDeSejourDansLaFile = " + tpsTotFile + "\n" +
+		"TempsMoyenDeSejourSurLaMachine = " + tpsTotMachine + "\n";
+	zone->AppendText(donneeSysteme);
 	for (int i = 1; i <= NBPIECES; i++) {
 		System::String^ donneePiece = "" + pieces[i].num + " " + 
 			pieces[i].dateEntreeSys + " " + pieces[i].dateSortieSys + "\n";
 		zone->AppendText(donneePiece);
 	}
-	/*System::String^ nbPiecesPerdue = "" + e.nbPiecesPerdues + "\n";
-	zone->AppendText(nbPiecesPerdue);
-	System::String^ nbPieceSortie = "" + s.nbPieceSortie + "\n";
-	zone->AppendText(nbPieceSortie);*/
 	zone->AppendText("Fin de simulation.");
 }

@@ -149,9 +149,10 @@ namespace ConsoleApplication1 {
 			// 
 			// richTextBox2
 			// 
-			this->richTextBox2->Enabled = false;
 			this->richTextBox2->Location = System::Drawing::Point(832, 12);
 			this->richTextBox2->Name = L"richTextBox2";
+			this->richTextBox2->ReadOnly = true;
+			this->richTextBox2->ScrollBars = System::Windows::Forms::RichTextBoxScrollBars::Vertical;
 			this->richTextBox2->Size = System::Drawing::Size(364, 279);
 			this->richTextBox2->TabIndex = 12;
 			this->richTextBox2->Text = L"";
