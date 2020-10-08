@@ -39,29 +39,30 @@ void poser(t_machine& m, t_piece p) {
 void simuler(int duree, int DA, int DT, t_systeme& systeme,
 	System::Windows::Forms::RichTextBox^ zone)
 {
-	//System::Windows::Forms::Application::DoEvents();
-
 	/* INITIALISATION */
 	const int INF = duree + 10;
-	const int NBPIECES = 17;
 	t_entree e = { OCCUPEE };
 	t_sortie s = { 0 };
 	t_file f = { 0 };
 	t_machine m = { VIDE };
-	t_piece pieces[NBPIECES+1] = { 0 }; // nb pièces passant par entrée
 	e.dateProchainEvenement = 0;
 	m.dateProchainEvenement = INF;
 
 	for (int i = 0; i <= NBPIECES; i++) {
-		pieces[i].num = i;
+		t_piece& p = systeme.pieces[i];
+		p.num = i;
+		p.dateEntreeFile = p.dateSortieFile =
+			p.dateEntreeMachine = p.dateSortieMachine =
+			p.dateEntreeSys = p.dateSortieSys = 0;
 	}
 
 	/* SIMULATION */
 	int dateSimulation = 0;
 	int imin = 1;
 	int iPiece = 1;
-	e.contenu = pieces[iPiece];
+	e.contenu = systeme.pieces[iPiece];
 	while (dateSimulation < duree) {
+		System::Windows::Forms::Application::DoEvents();
 		// chercher entité avec DPE min
 		if (e.dateProchainEvenement < m.dateProchainEvenement) {
 			imin = 1;
@@ -74,7 +75,7 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme,
 
 		// si DPE min dans l'entrée
 		if (imin == 1) {
-			pieces[iPiece].dateEntreeSys = dateSimulation;
+			systeme.pieces[iPiece].dateEntreeSys = dateSimulation;
 			// Tests sur la file
 			if (estPleine(f)) {
 				// entrée bloquée
@@ -85,24 +86,26 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme,
 			else if (m.etat == VIDE) {
 				// la pièce va directement sur la machine
 				int numPiece = retirer(e);
+				t_piece& p = systeme.pieces[numPiece];
 				e.dateProchainEvenement = dateSimulation + DA;
-				poser(m, pieces[numPiece]);
-				pieces[numPiece].dateEntreeMachine = dateSimulation;
+				poser(m, p);
+				p.dateEntreeMachine = dateSimulation;
 				m.dateProchainEvenement = dateSimulation + DT;
 			}
 			else {
 				// la pièce passe en file d'attente
 				int numPiece = retirer(e);
+				t_piece& p = systeme.pieces[numPiece];
 				e.etat = VIDE;
 				e.dateProchainEvenement = dateSimulation + DA;
-				poser(f, pieces[numPiece]);
-				pieces[numPiece].dateEntreeFile = dateSimulation;
+				poser(f, p);
+				p.dateEntreeFile = dateSimulation;
 			}
 
 			// Ajout de nouvelle pièce dans l'entrée
 			if (iPiece < NBPIECES) {
 				iPiece++;
-				e.contenu = pieces[iPiece];
+				e.contenu = systeme.pieces[iPiece];
 			}
 			else {
 				e.dateProchainEvenement = INF;
@@ -113,8 +116,9 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme,
 		if (imin == 2) {
 			if (m.etat == OCCUPEE) {
 				int numPiece = retirer(m);
-				pieces[numPiece].dateSortieMachine = dateSimulation;
-				pieces[numPiece].dateSortieSys = dateSimulation;
+				t_piece& p = systeme.pieces[numPiece];
+				p.dateSortieMachine = dateSimulation;
+				p.dateSortieSys = dateSimulation;
 				s.nbPieceSortie++;
 				m.etat = VIDE;
 			}
@@ -123,12 +127,13 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme,
 			}
 			else {
 				int numPiece = retirer(f);
-				pieces[numPiece].dateSortieFile = dateSimulation;
-				pieces[numPiece].dateEntreeMachine = dateSimulation;
+				t_piece& p = systeme.pieces[numPiece];
+				p.dateSortieFile = dateSimulation;
+				p.dateEntreeMachine = dateSimulation;
 				if (e.etat == BLOQUEE) {
 					e.dateProchainEvenement = dateSimulation;
 				}
-				poser(m, pieces[numPiece]);
+				poser(m, p);
 				m.etat = OCCUPEE;
 				m.dateProchainEvenement = dateSimulation + DT;
 			}
@@ -137,7 +142,8 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme,
 	/* CALCUL DES TEMPS MOYENS */
 	int tpsTotFile = 0, tpsTotMachine = 0, tpsTotSys = 0;
 	for (int i = 1; i <= NBPIECES; i++) {
-		t_piece p = pieces[i];
+		System::Windows::Forms::Application::DoEvents();
+		t_piece p = systeme.pieces[i];
 		// si la pièce n'a pas été perdue
 		if (p.dateSortieSys != 0) {
 			tpsTotFile += (p.dateSortieFile - p.dateEntreeFile);
@@ -154,8 +160,10 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme,
 		"TempsMoyenDeSejourSurLaMachine = " + tpsTotMachine + "\n";
 	zone->AppendText(donneeSysteme);
 	for (int i = 1; i <= NBPIECES; i++) {
-		System::String^ donneePiece = "" + pieces[i].num + " " + 
-			pieces[i].dateEntreeSys + " " + pieces[i].dateSortieSys + "\n";
+		System::Windows::Forms::Application::DoEvents();
+		t_piece& p = systeme.pieces[i];
+		System::String^ donneePiece = "" + p.num + " " + 
+			p.dateEntreeSys + " " + p.dateSortieSys + "\n";
 		zone->AppendText(donneePiece);
 	}
 	zone->AppendText("Fin de simulation.");

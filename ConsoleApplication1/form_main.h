@@ -279,7 +279,7 @@ namespace ConsoleApplication1 {
 	}
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
 		chart1->Series[0]->Points->Clear(); // nettoyage
-		float x = .1, y = 0;
+		float x = .1, y = .0;
 		while (x <= 10) {
 			y = cos(x);
 			chart1->Series[0]->Points->AddXY(x, y);

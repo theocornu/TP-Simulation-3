@@ -1,6 +1,7 @@
 #pragma once
 
 const int TAILLE_FILE = 10; // 1 case vide pour fin de file
+const int NBPIECES = 10000;
 
 enum t_etat
 {
@@ -60,6 +61,7 @@ typedef struct t_systeme{
 	t_entree e;
 	t_file f;
 	t_sortie s;
+	t_piece pieces[NBPIECES+1];
 }t_systeme;
 
 
