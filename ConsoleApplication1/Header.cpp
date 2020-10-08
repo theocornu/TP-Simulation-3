@@ -117,10 +117,9 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme,
 	/* CALCUL DES TEMPS MOYENS */
 	/* AFFICHAGE STATS PIECES */
 	for (int i = 0; i < TAILLE_FILE; i++) {
-		System::String^ data;
-		data += "" + pieces[i].num + " " + pieces[i].dateEntreeSys + " " + pieces[i].dateSortieSys + "\n";
-		zone->AppendText(data);
-		data = "";
+		System::String^ donneePiece = "" + pieces[i].num + " " + 
+			pieces[i].dateEntreeSys + " " + pieces[i].dateSortieSys + "\n";
+		zone->AppendText(donneePiece);
 	}
 	zone->AppendText("Fin de simulation.");
 }
