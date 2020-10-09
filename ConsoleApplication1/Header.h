@@ -25,7 +25,7 @@ typedef struct t_piece
 
 typedef struct t_entree {
 	t_etat etat;
-	struct t_piece contenu;
+	t_piece contenu;
 	int dateProchainEvenement;
 	int nbPiecesPerdues;
 }t_entree;
@@ -33,7 +33,7 @@ typedef struct t_entree {
 
 typedef struct t_file
 {
-	struct t_piece liste[TAILLE_FILE];
+	t_piece liste[TAILLE_FILE];
 	int debut;
 	int fin;
 }t_file;
@@ -42,7 +42,7 @@ typedef struct t_file
 typedef struct t_machine
 {
 	t_etat etat;
-	struct t_piece contenu;
+	t_piece contenu;
 	int dateProchainEvenement;
 }t_machine;
 
@@ -70,7 +70,7 @@ int retirer(t_machine& m);
 int retirer(t_file& f);
 bool estPleine(const t_file& f);
 bool estVide(const t_file& f);
-void poser(t_file& f, t_piece p);
-void poser(t_machine& m, t_piece p);
+void poser(t_file& f,const t_piece& p);
+void poser(t_machine& m, const t_piece& p);
 void simuler(int duree, int DA, int DT, t_systeme& systeme, 
 	System::Windows::Forms::RichTextBox^ zone);

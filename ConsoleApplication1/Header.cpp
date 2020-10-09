@@ -25,12 +25,12 @@ int retirer(t_entree& e) {
 	return e.contenu.num;
 }
 
-void poser(t_file& f, t_piece p) {
+void poser(t_file& f, const t_piece& p) {
 	f.liste[f.fin] = p;
 	f.fin = (f.fin + 1) % TAILLE_FILE;
 }
 
-void poser(t_machine& m, t_piece p) {
+void poser(t_machine& m, const t_piece& p) {
 	m.contenu = p;
 	m.etat = OCCUPEE;
 }
@@ -41,10 +41,10 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme,
 {
 	/* INITIALISATION */
 	const int INF = duree + 10;
-	t_entree e = { OCCUPEE };
-	t_sortie s = { 0 };
-	t_file f = { 0 };
-	t_machine m = { VIDE };
+	t_entree& e = systeme.e;
+	t_sortie& s = systeme.s;
+	t_machine& m = systeme.m;
+	t_file& f = systeme.f;
 	e.dateProchainEvenement = 0;
 	m.dateProchainEvenement = INF;
 
@@ -140,23 +140,23 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme,
 		}
 	}
 	/* CALCUL DES TEMPS MOYENS */
-	int tpsTotFile = 0, tpsTotMachine = 0, tpsTotSys = 0;
+	float tpsMoyFile = .0f, tpsTotMachine = .0f, tpsTotSys = .0f;
 	for (int i = 1; i <= NBPIECES; i++) {
 		System::Windows::Forms::Application::DoEvents();
 		t_piece p = systeme.pieces[i];
 		// si la pièce n'a pas été perdue
 		if (p.dateSortieSys != 0) {
-			tpsTotFile += (p.dateSortieFile - p.dateEntreeFile);
+			tpsMoyFile += (p.dateSortieFile - p.dateEntreeFile);
 			tpsTotMachine += (p.dateSortieMachine - p.dateEntreeMachine);
 			tpsTotSys += (p.dateSortieSys - p.dateEntreeSys);
 		}
 	}
-	tpsTotFile /= s.nbPieceSortie;
+	tpsMoyFile /= s.nbPieceSortie;
 	tpsTotMachine /= s.nbPieceSortie;
 	tpsTotSys /= s.nbPieceSortie;
 	/* AFFICHAGE STATS PIECES */
 	System::String^ donneeSysteme = "TempsMoyenDeSejourDansLeSysteme = " +
-		tpsTotSys + "\n" + "TempsMoyenDeSejourDansLaFile = " + tpsTotFile + "\n" +
+		tpsTotSys + "\n" + "TempsMoyenDeSejourDansLaFile = " + tpsMoyFile + "\n" +
 		"TempsMoyenDeSejourSurLaMachine = " + tpsTotMachine + "\n";
 	zone->AppendText(donneeSysteme);
 	for (int i = 1; i <= NBPIECES; i++) {

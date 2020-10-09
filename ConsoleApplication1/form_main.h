@@ -256,11 +256,13 @@ namespace ConsoleApplication1 {
 	}
 	/* BOUTON "LANCER SIMULATION" */
 	private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e) {
+		
 		richTextBox2->Text = ""; // nettoyage
 		if (textBox1->Text == "" || textBox2->Text == "" || textBox4->Text == "") {
 			richTextBox2->Text = "Veuillez remplir chaque paramètre ci-contre.";
 		}
 		else {
+			/* PARTIE SIMULATION */
 			// 1) lire la durée de la simulation
 			int duree = 0;
 			duree = int::Parse(textBox1->Text);
@@ -271,15 +273,20 @@ namespace ConsoleApplication1 {
 			int DT = 0;
 			DT = int::Parse(textBox4->Text);
 
-			t_systeme systeme;
+			t_systeme systeme = { {VIDE} };
 
 			richTextBox2->Text = "Lancement de la simulation...\n";
 			simuler(duree, DA, DT, systeme, richTextBox2);
+			/* PARTIE TRACAGE DE COURBES */
+			float x = .1f, y = .0f;
+			/*while (x <= duree) {
+				y = 
+			}*/
 		}
 	}
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
 		chart1->Series[0]->Points->Clear(); // nettoyage
-		float x = .1, y = .0;
+		float x = .1f, y = .0f;
 		while (x <= 10) {
 			y = cos(x);
 			chart1->Series[0]->Points->AddXY(x, y);
