@@ -72,5 +72,4 @@ bool estPleine(const t_file& f);
 bool estVide(const t_file& f);
 void poser(t_file& f,const t_piece& p);
 void poser(t_machine& m, const t_piece& p);
-void simuler(int duree, int DA, int DT, t_systeme& systeme, 
-	System::Windows::Forms::RichTextBox^ zone);
+void simuler(int duree, int DA, int DT, t_systeme& systeme);

@@ -263,7 +263,7 @@ namespace ConsoleApplication1 {
 			richTextBox2->Text = "Veuillez remplir chaque paramètre ci-contre.";
 		}
 		else {
-			/* PARTIE SIMULATION */
+			/* SIMULATION */
 			// lire la durée de la simulation
 			int duree = 0;
 			duree = int::Parse(textBox1->Text);
@@ -275,26 +275,13 @@ namespace ConsoleApplication1 {
 			DT = int::Parse(textBox4->Text);
 
 			t_systeme systeme = { {VIDE} };
-
 			richTextBox2->Text = "Lancement de la simulation...\n";
-			simuler(duree, DA, DT, systeme, richTextBox2);
-			/* PARTIE TRACAGE DE COURBES */
-			int iPiece = 1;
-			// variables courbe "Source et sortie"
-			int y_nbPiecesEntree = 0,
-				y_nbPiecesSortie = 0,
-				y_nbPiecesRejetees = 0;
-			// variables courbe "Statistiques"
-			float y_sejourMoySys = .0f,
-				y_sejourMoyFile = .0f,
-				y_sejourMoyMachine = .0f;
-			/*for (int x_temps = DA; x_temps <= duree; x_temps += DA) {
+			simuler(duree, DA, DT, systeme);
 
-			}*/
 			/* AFFICHAGE STATS PIECES */
 			t_sortie& s = systeme.s;
 			System::String^ donneeSysteme = "TempsMoyenDeSejourDansLeSysteme = " +
-				s.tempsMoyenSys+ "\n" + "TempsMoyenDeSejourDansLaFile = " + s.tempsMoyenFile + "\n" +
+				s.tempsMoyenSys + "\n" + "TempsMoyenDeSejourDansLaFile = " + s.tempsMoyenFile + "\n" +
 				"TempsMoyenDeSejourSurLaMachine = " + s.tempsMoyenMachine + "\n";
 			richTextBox2->AppendText(donneeSysteme);
 			for (int i = 1; i <= NBPIECES; i++) {
@@ -305,6 +292,26 @@ namespace ConsoleApplication1 {
 				richTextBox2->AppendText(donneePiece);
 			}
 			richTextBox2->AppendText("Fin de simulation.");
+
+			/* TRACAGE DE COURBES */
+			int iPiece = 1;
+			// variables courbe "Source et sortie"
+			int y_nbPiecesEntree = 0,
+				y_nbPiecesSortie = 0,
+				y_nbPiecesRejetees = 0;
+			// variables courbe "Statistiques"
+			float y_sejourMoySys = .0f,
+				y_sejourMoyFile = .0f,
+				y_sejourMoyMachine = .0f;
+			for (int x_temps = DA; x_temps <= duree; x_temps += DA) {
+				System::Windows::Forms::Application::DoEvents();
+				simuler(x_temps, DA, DT, systeme);
+				y_nbPiecesSortie = systeme.s.nbPieceSortie;
+				y_nbPiecesRejetees = systeme.e.nbPiecesPerdues;
+				y_nbPiecesEntree = y_nbPiecesSortie + y_nbPiecesRejetees;
+				//chart1->Series[0]->Points->AddXY(x_temps, y_nbPiecesEntree);
+			}
+			
 		}
 	}
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {

@@ -36,8 +36,7 @@ void poser(t_machine& m, const t_piece& p) {
 }
 
 
-void simuler(int duree, int DA, int DT, t_systeme& systeme,
-	System::Windows::Forms::RichTextBox^ zone)
+void simuler(int duree, int DA, int DT, t_systeme& systeme)
 {
 	/* INITIALISATION */
 	const int INF = duree + 10;
