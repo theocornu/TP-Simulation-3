@@ -246,21 +246,21 @@ namespace ConsoleApplication1 {
 			series4->ChartArea = L"ChartArea1";
 			series4->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::StepLine;
 			series4->Legend = L"Legend1";
-			series4->LegendText = L"Entrées";
+			series4->LegendText = L"Système";
 			series4->Name = L"Series1";
 			series5->BorderDashStyle = System::Windows::Forms::DataVisualization::Charting::ChartDashStyle::DashDot;
 			series5->BorderWidth = 2;
 			series5->ChartArea = L"ChartArea1";
 			series5->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::StepLine;
 			series5->Legend = L"Legend1";
-			series5->LegendText = L"Sorties";
+			series5->LegendText = L"File";
 			series5->Name = L"Series2";
 			series6->BorderDashStyle = System::Windows::Forms::DataVisualization::Charting::ChartDashStyle::Dot;
 			series6->BorderWidth = 2;
 			series6->ChartArea = L"ChartArea1";
 			series6->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::StepLine;
 			series6->Legend = L"Legend1";
-			series6->LegendText = L"Rejets";
+			series6->LegendText = L"Machine";
 			series6->Name = L"Series3";
 			this->chart2->Series->Add(series4);
 			this->chart2->Series->Add(series5);
@@ -340,6 +340,9 @@ namespace ConsoleApplication1 {
 		chart1->Series[0]->Points->Clear(); 
 		chart1->Series[1]->Points->Clear();
 		chart1->Series[2]->Points->Clear();
+		chart2->Series[0]->Points->Clear();
+		chart2->Series[1]->Points->Clear();
+		chart2->Series[2]->Points->Clear();
 
 		if (textBox1->Text == "" || textBox2->Text == "" || textBox4->Text == "") {
 			richTextBox2->Text = "Veuillez remplir chaque paramètre ci-contre.";
@@ -397,10 +400,18 @@ namespace ConsoleApplication1 {
 				}
 
 				if (p.dateSortieSys > 0) {
-					y_nbPiecesSortie++;
 					y_sejourMoySys *= y_nbPiecesSortie;
+					y_sejourMoyFile *= y_nbPiecesSortie;
+					y_sejourMoyMachine *= y_nbPiecesSortie;
+
+					y_nbPiecesSortie++;
+
 					y_sejourMoySys += (p.dateSortieSys - p.dateEntreeSys);
 					y_sejourMoySys /= y_nbPiecesSortie;
+					y_sejourMoyFile += (p.dateSortieFile - p.dateEntreeFile);
+					y_sejourMoyFile /= y_nbPiecesSortie;
+					y_sejourMoyMachine += (p.dateSortieMachine - p.dateEntreeMachine);
+					y_sejourMoyMachine /= y_nbPiecesSortie;
 				}
 				else {
 					y_nbPiecesRejetees++;
@@ -409,6 +420,10 @@ namespace ConsoleApplication1 {
 				chart1->Series[0]->Points->AddXY(p.dateEntreeSys, y_nbPiecesEntree);
 				chart1->Series[1]->Points->AddXY(p.dateEntreeSys + DT, y_nbPiecesSortie);
 				chart1->Series[2]->Points->AddXY(p.dateEntreeSys, y_nbPiecesRejetees);
+
+				chart2->Series[0]->Points->AddXY(p.dateEntreeSys, y_sejourMoySys);
+				chart2->Series[1]->Points->AddXY(p.dateEntreeSys, y_sejourMoyFile);
+				chart2->Series[2]->Points->AddXY(p.dateEntreeSys, y_sejourMoyMachine);
 			}
 		}
 	}
