@@ -286,6 +286,9 @@ namespace ConsoleApplication1 {
 		// nettoyage de la boite de texte et des courbes
 		richTextBox2->Text = "";
 		chart1->Series[0]->Points->Clear(); 
+		chart1->Series[1]->Points->Clear();
+		chart1->Series[2]->Points->Clear();
+
 		if (textBox1->Text == "" || textBox2->Text == "" || textBox4->Text == "") {
 			richTextBox2->Text = "Veuillez remplir chaque paramètre ci-contre.";
 		}
@@ -307,8 +310,9 @@ namespace ConsoleApplication1 {
 
 			/* AFFICHAGE STATS PIECES */
 			t_sortie& s = systeme.s;
-			System::String^ donneeSysteme = "TempsMoyenDeSejourDansLeSysteme = " +
-				s.tempsMoyenSys + "\n" + "TempsMoyenDeSejourDansLaFile = " + s.tempsMoyenFile + "\n" +
+			System::String^ donneeSysteme =
+				"TempsMoyenDeSejourDansLeSysteme = " + s.tempsMoyenSys + "\n" +
+				"TempsMoyenDeSejourDansLaFile = " + s.tempsMoyenFile + "\n" +
 				"TempsMoyenDeSejourSurLaMachine = " + s.tempsMoyenMachine + "\n";
 			richTextBox2->AppendText(donneeSysteme);
 			for (int i = 1; i <= NBPIECES; i++) {
@@ -331,24 +335,25 @@ namespace ConsoleApplication1 {
 				y_sejourMoyFile = .0f,
 				y_sejourMoyMachine = .0f;
 
-			//chart1->Series[0]->Points->AddXY(0, 0);
-			//chart1->Series[1]->Points->AddXY(0, 0);
-			//chart1->Series[2]->Points->AddXY(0, 0);
+			chart1->Series[0]->Points->AddXY(0, 0);
+			chart1->Series[1]->Points->AddXY(0, 0);
+			chart1->Series[2]->Points->AddXY(0, 0);
 			for (int iPiece = 1; iPiece <= nbPieces; iPiece++) {
 				t_piece& p = systeme.pieces[iPiece];
-				if (p.dateEntreeSys > 0 || p.num == 0) {
+				if (p.dateEntreeSys > 0 || p.num == 1) {
 					y_nbPiecesEntree++;
-					chart1->Series[0]->Points->AddXY(p.dateEntreeSys, y_nbPiecesEntree);
 				}
 
 				if (p.dateSortieSys > 0) {
 					y_nbPiecesSortie++;
-					chart1->Series[1]->Points->AddXY(p.dateSortieSys, y_nbPiecesSortie);
 				}
 				else {
 					y_nbPiecesRejetees++;
-					chart1->Series[2]->Points->AddXY(p.dateEntreeSys, y_nbPiecesRejetees);
 				}
+
+				chart1->Series[0]->Points->AddXY(p.dateEntreeSys, y_nbPiecesEntree);
+				chart1->Series[1]->Points->AddXY(p.dateSortieSys, y_nbPiecesSortie);
+				chart1->Series[2]->Points->AddXY(p.dateEntreeSys, y_nbPiecesRejetees);
 			}
 		}
 	}

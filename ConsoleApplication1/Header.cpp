@@ -144,7 +144,7 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme)
 		& tpsTotSys = s.tempsMoyenSys;
 	for (int i = 1; i <= NBPIECES; i++) {
 		System::Windows::Forms::Application::DoEvents();
-		t_piece p = systeme.pieces[i];
+		t_piece& p = systeme.pieces[i];
 		// si la pièce n'a pas été perdue
 		if (p.dateSortieSys != 0) {
 			tpsMoyFile += (p.dateSortieFile - p.dateEntreeFile);
