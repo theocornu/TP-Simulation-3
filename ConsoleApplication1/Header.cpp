@@ -140,7 +140,9 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme,
 		}
 	}
 	/* CALCUL DES TEMPS MOYENS */
-	float tpsMoyFile = .0f, tpsTotMachine = .0f, tpsTotSys = .0f;
+	float& tpsMoyFile = s.tempsMoyenFile,
+		& tpsTotMachine = s.tempsMoyenMachine,
+		& tpsTotSys = s.tempsMoyenSys;
 	for (int i = 1; i <= NBPIECES; i++) {
 		System::Windows::Forms::Application::DoEvents();
 		t_piece p = systeme.pieces[i];
@@ -154,17 +156,4 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme,
 	tpsMoyFile /= s.nbPieceSortie;
 	tpsTotMachine /= s.nbPieceSortie;
 	tpsTotSys /= s.nbPieceSortie;
-	/* AFFICHAGE STATS PIECES */
-	System::String^ donneeSysteme = "TempsMoyenDeSejourDansLeSysteme = " +
-		tpsTotSys + "\n" + "TempsMoyenDeSejourDansLaFile = " + tpsMoyFile + "\n" +
-		"TempsMoyenDeSejourSurLaMachine = " + tpsTotMachine + "\n";
-	zone->AppendText(donneeSysteme);
-	for (int i = 1; i <= NBPIECES; i++) {
-		System::Windows::Forms::Application::DoEvents();
-		t_piece& p = systeme.pieces[i];
-		System::String^ donneePiece = "" + p.num + " " + 
-			p.dateEntreeSys + " " + p.dateSortieSys + "\n";
-		zone->AppendText(donneePiece);
-	}
-	zone->AppendText("Fin de simulation.");
 }

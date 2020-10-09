@@ -50,9 +50,9 @@ typedef struct t_machine
 typedef struct t_sortie
 {
 	int nbPieceSortie;
-	int tempsMoyenSys;
-	int tempsMoyenFile;
-	int tempsMoyenMachine;
+	float tempsMoyenSys;
+	float tempsMoyenFile;
+	float tempsMoyenMachine;
 }t_sortie;
 
 

@@ -256,20 +256,21 @@ namespace ConsoleApplication1 {
 	}
 	/* BOUTON "LANCER SIMULATION" */
 	private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e) {
-		
-		richTextBox2->Text = ""; // nettoyage
+		// nettoyage de la boite de texte et des courbes
+		richTextBox2->Text = "";
+		chart1->Series[0]->Points->Clear(); 
 		if (textBox1->Text == "" || textBox2->Text == "" || textBox4->Text == "") {
 			richTextBox2->Text = "Veuillez remplir chaque paramètre ci-contre.";
 		}
 		else {
 			/* PARTIE SIMULATION */
-			// 1) lire la durée de la simulation
+			// lire la durée de la simulation
 			int duree = 0;
 			duree = int::Parse(textBox1->Text);
-			// 2) lire la durée interarrivée
+			// lire la durée interarrivée
 			int DA = 0;
 			DA = int::Parse(textBox2->Text);
-			// 3) lire la durée de traitement
+			// lire la durée de traitement
 			int DT = 0;
 			DT = int::Parse(textBox4->Text);
 
@@ -278,10 +279,32 @@ namespace ConsoleApplication1 {
 			richTextBox2->Text = "Lancement de la simulation...\n";
 			simuler(duree, DA, DT, systeme, richTextBox2);
 			/* PARTIE TRACAGE DE COURBES */
-			float x = .1f, y = .0f;
-			/*while (x <= duree) {
-				y = 
+			int iPiece = 1;
+			// variables courbe "Source et sortie"
+			int y_nbPiecesEntree = 0,
+				y_nbPiecesSortie = 0,
+				y_nbPiecesRejetees = 0;
+			// variables courbe "Statistiques"
+			float y_sejourMoySys = .0f,
+				y_sejourMoyFile = .0f,
+				y_sejourMoyMachine = .0f;
+			/*for (int x_temps = DA; x_temps <= duree; x_temps += DA) {
+
 			}*/
+			/* AFFICHAGE STATS PIECES */
+			t_sortie& s = systeme.s;
+			System::String^ donneeSysteme = "TempsMoyenDeSejourDansLeSysteme = " +
+				s.tempsMoyenSys+ "\n" + "TempsMoyenDeSejourDansLaFile = " + s.tempsMoyenFile + "\n" +
+				"TempsMoyenDeSejourSurLaMachine = " + s.tempsMoyenMachine + "\n";
+			richTextBox2->AppendText(donneeSysteme);
+			for (int i = 1; i <= NBPIECES; i++) {
+				System::Windows::Forms::Application::DoEvents();
+				t_piece& p = systeme.pieces[i];
+				System::String^ donneePiece = "" + p.num + " " +
+					p.dateEntreeSys + " " + p.dateSortieSys + "\n";
+				richTextBox2->AppendText(donneePiece);
+			}
+			richTextBox2->AppendText("Fin de simulation.");
 		}
 	}
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
