@@ -352,7 +352,7 @@ namespace ConsoleApplication1 {
 				}
 
 				chart1->Series[0]->Points->AddXY(p.dateEntreeSys, y_nbPiecesEntree);
-				chart1->Series[1]->Points->AddXY(p.dateSortieSys, y_nbPiecesSortie);
+				chart1->Series[1]->Points->AddXY(p.dateEntreeSys + DT, y_nbPiecesSortie);
 				chart1->Series[2]->Points->AddXY(p.dateEntreeSys, y_nbPiecesRejetees);
 			}
 		}
