@@ -138,6 +138,15 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme)
 			}
 		}
 	}
+	// vidage de la file
+	while (!estVide(f)) {
+		int numPiece = retirer(f);
+		t_piece& p = systeme.pieces[numPiece];
+		p.dateSortieFile = dateSimulation;
+		p.dateSortieSys = dateSimulation;
+		p.dateSortieMachine = dateSimulation;
+	}
+
 	/* CALCUL DES TEMPS MOYENS */
 	float& tpsMoyFile = s.tempsMoyenFile,
 		& tpsTotMachine = s.tempsMoyenMachine,
