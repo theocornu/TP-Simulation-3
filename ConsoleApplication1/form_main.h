@@ -75,6 +75,8 @@ namespace ConsoleApplication1 {
 			System::Windows::Forms::DataVisualization::Charting::ChartArea^  chartArea1 = (gcnew System::Windows::Forms::DataVisualization::Charting::ChartArea());
 			System::Windows::Forms::DataVisualization::Charting::Legend^  legend1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Legend());
 			System::Windows::Forms::DataVisualization::Charting::Series^  series1 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
+			System::Windows::Forms::DataVisualization::Charting::Series^  series2 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
+			System::Windows::Forms::DataVisualization::Charting::Series^  series3 = (gcnew System::Windows::Forms::DataVisualization::Charting::Series());
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
@@ -169,17 +171,42 @@ namespace ConsoleApplication1 {
 			// 
 			// chart1
 			// 
+			chartArea1->AxisX->ArrowStyle = System::Windows::Forms::DataVisualization::Charting::AxisArrowStyle::Triangle;
+			chartArea1->AxisX->LineDashStyle = System::Windows::Forms::DataVisualization::Charting::ChartDashStyle::Dot;
+			chartArea1->AxisX->MajorGrid->Enabled = false;
+			chartArea1->AxisX->Minimum = 0;
+			chartArea1->AxisY->ArrowStyle = System::Windows::Forms::DataVisualization::Charting::AxisArrowStyle::Triangle;
+			chartArea1->AxisY->MajorGrid->Enabled = false;
+			chartArea1->AxisY->Minimum = 0;
 			chartArea1->Name = L"ChartArea1";
 			this->chart1->ChartAreas->Add(chartArea1);
 			legend1->Name = L"Legend1";
 			this->chart1->Legends->Add(legend1);
 			this->chart1->Location = System::Drawing::Point(12, 398);
 			this->chart1->Name = L"chart1";
+			series1->BorderWidth = 2;
 			series1->ChartArea = L"ChartArea1";
-			series1->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::Line;
+			series1->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::StepLine;
 			series1->Legend = L"Legend1";
+			series1->LegendText = L"Entrées";
 			series1->Name = L"Series1";
+			series2->BorderDashStyle = System::Windows::Forms::DataVisualization::Charting::ChartDashStyle::DashDot;
+			series2->BorderWidth = 2;
+			series2->ChartArea = L"ChartArea1";
+			series2->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::StepLine;
+			series2->Legend = L"Legend1";
+			series2->LegendText = L"Sorties";
+			series2->Name = L"Series2";
+			series3->BorderDashStyle = System::Windows::Forms::DataVisualization::Charting::ChartDashStyle::Dot;
+			series3->BorderWidth = 2;
+			series3->ChartArea = L"ChartArea1";
+			series3->ChartType = System::Windows::Forms::DataVisualization::Charting::SeriesChartType::StepLine;
+			series3->Legend = L"Legend1";
+			series3->LegendText = L"Rejets";
+			series3->Name = L"Series3";
 			this->chart1->Series->Add(series1);
+			this->chart1->Series->Add(series2);
+			this->chart1->Series->Add(series3);
 			this->chart1->Size = System::Drawing::Size(432, 291);
 			this->chart1->TabIndex = 14;
 			this->chart1->Text = L"chart1";
@@ -294,7 +321,7 @@ namespace ConsoleApplication1 {
 			richTextBox2->AppendText("Fin de simulation.");
 
 			/* TRACAGE DE COURBES */
-			int iPiece = 1;
+			int nbPieces = systeme.s.nbPieceSortie + systeme.e.nbPiecesPerdues;
 			// variables courbe "Source et sortie"
 			int y_nbPiecesEntree = 0,
 				y_nbPiecesSortie = 0,
@@ -303,15 +330,26 @@ namespace ConsoleApplication1 {
 			float y_sejourMoySys = .0f,
 				y_sejourMoyFile = .0f,
 				y_sejourMoyMachine = .0f;
-			for (int x_temps = DA; x_temps <= duree; x_temps += DA) {
-				System::Windows::Forms::Application::DoEvents();
-				simuler(x_temps, DA, DT, systeme);
-				y_nbPiecesSortie = systeme.s.nbPieceSortie;
-				y_nbPiecesRejetees = systeme.e.nbPiecesPerdues;
-				y_nbPiecesEntree = y_nbPiecesSortie + y_nbPiecesRejetees;
-				//chart1->Series[0]->Points->AddXY(x_temps, y_nbPiecesEntree);
+
+			//chart1->Series[0]->Points->AddXY(0, 0);
+			//chart1->Series[1]->Points->AddXY(0, 0);
+			//chart1->Series[2]->Points->AddXY(0, 0);
+			for (int iPiece = 1; iPiece <= nbPieces; iPiece++) {
+				t_piece& p = systeme.pieces[iPiece];
+				if (p.dateEntreeSys > 0 || p.num == 0) {
+					y_nbPiecesEntree++;
+					chart1->Series[0]->Points->AddXY(p.dateEntreeSys, y_nbPiecesEntree);
+				}
+
+				if (p.dateSortieSys > 0) {
+					y_nbPiecesSortie++;
+					chart1->Series[1]->Points->AddXY(p.dateSortieSys, y_nbPiecesSortie);
+				}
+				else {
+					y_nbPiecesRejetees++;
+					chart1->Series[2]->Points->AddXY(p.dateEntreeSys, y_nbPiecesRejetees);
+				}
 			}
-			
 		}
 	}
 	private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
