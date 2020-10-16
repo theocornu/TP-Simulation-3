@@ -13,6 +13,7 @@ enum t_etat
 
 typedef struct t_piece
 {
+	// int id; POUR REMPLACER NUM
 	int num;
 	int dateEntreeSys;
 	int dateEntreeFile;
@@ -44,7 +45,9 @@ typedef struct t_file
 
 typedef struct t_machine
 {
+	// int id;
 	t_etat etat;
+	// int idMachineBloquee;
 	t_piece contenu;
 	int dateProchainEvenement;
 }t_machine;
@@ -61,6 +64,7 @@ typedef struct t_sortie
 
 typedef struct t_systeme{
 	t_machine m;
+	// t_machine m[3];
 	t_entree e;
 	t_file f;
 	t_sortie s;
