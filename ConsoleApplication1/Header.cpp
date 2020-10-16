@@ -12,6 +12,7 @@ bool estVide(const t_file& f) {
 int retirer(t_file& f) {
 	int piece = f.liste[f.debut].num;
 	f.debut = (f.debut + 1) % TAILLE_FILE;
+	f.nbPieces--;
 	return piece;
 }
 
@@ -28,6 +29,7 @@ int retirer(t_entree& e) {
 void poser(t_file& f, const t_piece& p) {
 	f.liste[f.fin] = p;
 	f.fin = (f.fin + 1) % TAILLE_FILE;
+	f.nbPieces++;
 }
 
 void poser(t_machine& m, const t_piece& p) {
@@ -59,6 +61,7 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme)
 	int dateSimulation = 0;
 	int imin = 1;
 	int iPiece = 1;
+	int poidsPiecesFile = 0;
 	e.contenu = systeme.pieces[iPiece];
 	while (dateSimulation < duree) {
 		System::Windows::Forms::Application::DoEvents();
@@ -97,7 +100,11 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme)
 				t_piece& p = systeme.pieces[numPiece];
 				e.etat = VIDE;
 				e.dateProchainEvenement = dateSimulation + DA;
+				
 				poser(f, p);
+				f.nbPiecesMoyen += f.dateDernierePiece * f.nbPieces;
+				poidsPiecesFile += f.dateDernierePiece;
+				f.dateDernierePiece = dateSimulation;
 				p.dateEntreeFile = dateSimulation;
 			}
 
@@ -164,4 +171,6 @@ void simuler(int duree, int DA, int DT, t_systeme& systeme)
 	tpsMoyFile /= s.nbPieceSortie;
 	tpsTotMachine /= s.nbPieceSortie;
 	tpsTotSys /= s.nbPieceSortie;
+	if (poidsPiecesFile > 0)
+		f.nbPiecesMoyen = (float)f.nbPiecesMoyen / poidsPiecesFile;
 }

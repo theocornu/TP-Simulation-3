@@ -36,6 +36,9 @@ typedef struct t_file
 	t_piece liste[TAILLE_FILE];
 	int debut;
 	int fin;
+	int dateDernierePiece;
+	int nbPieces;
+	float nbPiecesMoyen;
 }t_file;
 
 

@@ -368,7 +368,8 @@ namespace ConsoleApplication1 {
 			System::String^ donneeSysteme =
 				"TempsMoyenDeSejourDansLeSysteme = " + s.tempsMoyenSys + "\n" +
 				"TempsMoyenDeSejourDansLaFile = " + s.tempsMoyenFile + "\n" +
-				"TempsMoyenDeSejourSurLaMachine = " + s.tempsMoyenMachine + "\n";
+				"TempsMoyenDeSejourSurLaMachine = " + s.tempsMoyenMachine + "\n" +
+				"NombreMoyenDePiecesSurLaFile = " + systeme.f.nbPiecesMoyen + "\n";
 			richTextBox2->AppendText(donneeSysteme);
 			for (int i = 1; i <= NBPIECES; i++) {
 				System::Windows::Forms::Application::DoEvents();
