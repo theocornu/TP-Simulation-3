@@ -53,7 +53,7 @@ typedef struct t_file
 typedef struct t_machine
 {
 	t_etat etat;
-	int idMachineBloquee;
+	int choixDest; // destination calculée pour la machine
 	t_piece contenu;
 	t_file file;
 	int dpe;

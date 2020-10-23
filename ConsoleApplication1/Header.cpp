@@ -102,14 +102,17 @@ void simuler_Partie1(int duree, int DA, int SA, int SB, int SC, t_systemePartie1
 		// si DPE min dans la machine A
 		else if (imin == MACHINE_A) {
 			dateSimulation = mA.dpe;
-			// sortie du système
+			
+			// SORTIE
 			if (mA.etat == OCCUPEE) {
 				t_piece p = retirer(mA);
 				// MAJ dateSortie de p
-				// Calcul de la prochaine machine où aller
+				// Calcul de la prochaine machine où aller (B ou C)
 				// MAJ position et dateEntree de p
-				// Ajouter pièce dans file de machine obtenue
+				// Ajouter pièce dans file de machine obtenue si possible
 			}
+
+			// ENTREE
 			// machine bloquée
 			if (estVide(mA.file)) {
 				mA.etat = BLOQUEE;
@@ -123,6 +126,8 @@ void simuler_Partie1(int duree, int DA, int SA, int SB, int SC, t_systemePartie1
 				poser(mA, p);
 				mA.dpe = dateSimulation + SA;
 			}
+
+			
 
 			/*if (m.etat == OCCUPEE) {
 				int numPiece = retirer(m);
