@@ -1,6 +1,9 @@
 #pragma once
 
-const int TAILLE_FILE = 10; // 1 case vide pour fin de file
+const int CAPACITE_FILE_FINIE = 10;
+const int CAPACITE_FILE_INFINIE = 1000;
+const int CAPACITE_SORTIE = 50;
+const int NBPOSITIONS = 12;
 const int NBPIECES = 10000;
 
 enum t_etat
@@ -13,28 +16,28 @@ enum t_etat
 
 typedef struct t_piece
 {
-	// int id; POUR REMPLACER NUM
 	int num;
 	int dateEntreeSys;
 	int dateEntreeFile;
 	int dateSortieFile;
-	int dateEntreeMachine;
-	int dateSortieMachine;
 	int dateSortieSys;
+	int dateEntree[NBPOSITIONS];
+	int dateSortie[NBPOSITIONS];
+	int position[NBPOSITIONS]; // numéro de machine
 }t_piece;
 
 
 typedef struct t_entree {
 	t_etat etat;
 	t_piece contenu;
-	int dateProchainEvenement;
+	int dpe;
 	int nbPiecesPerdues;
 }t_entree;
 
 
 typedef struct t_file
 {
-	t_piece liste[TAILLE_FILE];
+	t_piece liste[CAPACITE_FILE_FINIE+1]; // 1 case vide pour fin de file
 	int debut;
 	int fin;
 	int dateDernierePiece;
@@ -45,11 +48,10 @@ typedef struct t_file
 
 typedef struct t_machine
 {
-	// int id;
 	t_etat etat;
-	// int idMachineBloquee;
+	int idMachineBloquee;
 	t_piece contenu;
-	int dateProchainEvenement;
+	int dpe;
 }t_machine;
 
 
@@ -59,24 +61,35 @@ typedef struct t_sortie
 	float tempsMoyenSys;
 	float tempsMoyenFile;
 	float tempsMoyenMachine;
+	t_piece pieces[CAPACITE_SORTIE+1];
 }t_sortie;
 
 
 typedef struct t_systeme{
 	t_machine m;
-	// t_machine m[3];
 	t_entree e;
 	t_file f;
 	t_sortie s;
 	t_piece pieces[NBPIECES+1];
 }t_systeme;
 
+// A FAIRE : Fusionner machine et file
+typedef struct t_systemePartie1{
+	t_machine mA;
+	t_machine mB;
+	t_machine mC;
+	t_entree e;
+	t_file f;
+	t_sortie s;
+}t_systemePartie1;
 
-int retirer(t_entree& e);
-int retirer(t_machine& m);
-int retirer(t_file& f);
+
+t_piece retirer(t_entree& e);
+t_piece retirer(t_machine& m);
+t_piece retirer(t_file& f);
 bool estPleine(const t_file& f);
 bool estVide(const t_file& f);
+void poser(t_entree& e, const t_piece& p);
 void poser(t_file& f,const t_piece& p);
 void poser(t_machine& m, const t_piece& p);
-void simuler(int duree, int DA, int DT, t_systeme& systeme);
+void simuler(int duree, int DA, int SA, int SB, int SC, t_systeme& systeme);
