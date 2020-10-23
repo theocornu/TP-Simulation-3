@@ -13,6 +13,13 @@ enum t_etat
 	BLOQUEE
 };
 
+enum t_position {
+	ENTREE = 1,
+	MACHINE_A = 2,
+	MACHINE_B = 3,
+	MACHINE_C = 4,
+};
+
 
 typedef struct t_piece
 {
@@ -40,9 +47,6 @@ typedef struct t_file
 	t_piece liste[CAPACITE_FILE_FINIE+1]; // 1 case vide pour fin de file
 	int debut;
 	int fin;
-	int dateDernierePiece;
-	int nbPieces;
-	float nbPiecesMoyen;
 }t_file;
 
 
@@ -51,6 +55,7 @@ typedef struct t_machine
 	t_etat etat;
 	int idMachineBloquee;
 	t_piece contenu;
+	t_file file;
 	int dpe;
 }t_machine;
 
@@ -79,7 +84,6 @@ typedef struct t_systemePartie1{
 	t_machine mB;
 	t_machine mC;
 	t_entree e;
-	t_file f;
 	t_sortie s;
 }t_systemePartie1;
 

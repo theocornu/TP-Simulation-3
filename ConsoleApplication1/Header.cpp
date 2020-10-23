@@ -12,7 +12,6 @@ bool estVide(const t_file& f) {
 t_piece retirer(t_file& f) {
 	t_piece piece = f.liste[f.debut];
 	f.debut = (f.debut + 1) % CAPACITE_FILE_FINIE;
-	f.nbPieces--;
 	return piece;
 }
 
@@ -34,7 +33,6 @@ void poser(t_entree& e, const t_piece& p) {
 void poser(t_file& f, const t_piece& p) {
 	f.liste[f.fin] = p;
 	f.fin = (f.fin + 1) % CAPACITE_FILE_FINIE;
-	f.nbPieces++;
 }
 
 void poser(t_machine& m, const t_piece& p) {
@@ -50,7 +48,6 @@ void simuler_Partie1(int duree, int DA, int SA, int SB, int SC, t_systemePartie1
 	t_machine& mA = systeme.mA;
 	t_machine& mB = systeme.mB;
 	t_machine& mC = systeme.mC;
-	t_file& f = systeme.f;
 	e.dpe = 0;
 	mA.dpe = INF;
 	mB.dpe = INF;
@@ -59,33 +56,34 @@ void simuler_Partie1(int duree, int DA, int SA, int SB, int SC, t_systemePartie1
 	// SIMULATION
 	int dateSimulation = 0;
 	int imin = 1;
+	t_position imin = ENTREE;
 	int iPiece = 1;
 	t_piece premierePiece = { iPiece, dateSimulation };
 	poser(e, premierePiece);
 	while (dateSimulation < duree) {
 		// chercher entité avec DPE min
 		if (e.dpe < mA.dpe && e.dpe < mB.dpe && e.dpe < mC.dpe) {
-			imin = 1;
+			imin = ENTREE;
 		}
 		else if (mA.dpe < mB.dpe && mA.dpe < mC.dpe){
-			imin = 2;
+			imin = MACHINE_A;
 		}
 		else if (mB.dpe < mC.dpe) {
-			imin = 3;
+			imin = MACHINE_B;
 		}
 		else {
-			imin = 4;
+			imin = MACHINE_C;
 		}
 
 		// si DPE min dans l'entrée
-		if (imin == 1) {
+		if (imin == ENTREE) {
 			// A FAIRE : Remplacer f par mA.f
 			dateSimulation = e.dpe;
 			t_piece nouvPiece = { iPiece, dateSimulation }; // num, dateEntreeSys
 			t_piece pieceEntree = retirer(e);
 			poser(e, nouvPiece);
 			// Tests sur la file
-			if (estPleine(f)) {
+			if (estPleine(mA.file)) {
 				// entrée bloquée
 				e.etat = BLOQUEE;
 				e.nbPiecesPerdues++;
@@ -96,14 +94,13 @@ void simuler_Partie1(int duree, int DA, int SA, int SB, int SC, t_systemePartie1
 				e.etat = VIDE;
 				e.dpe = dateSimulation + DA;
 				// MAJ position et dateEntree de pieceEntree
-				poser(f, pieceEntree);
-				f.dateDernierePiece = dateSimulation;
+				poser(mA.file, pieceEntree);
 				// la pièce passe dans la machine A
 				mA.dpe = dateSimulation;
 			}
 		}
 		// si DPE min dans la machine A
-		if (imin == 2) {
+		else if (imin == MACHINE_A) {
 			dateSimulation = mA.dpe;
 			// sortie du système
 			if (mA.etat == OCCUPEE) {
@@ -114,13 +111,13 @@ void simuler_Partie1(int duree, int DA, int SA, int SB, int SC, t_systemePartie1
 				// Ajouter pièce dans file de machine obtenue
 			}
 			// machine bloquée
-			if (estVide(f)) {
+			if (estVide(mA.file)) {
 				mA.etat = BLOQUEE;
 				mA.dpe = INF;
 			}
 			// passage de file à machine
 			else {
-				t_piece p = retirer(f);
+				t_piece p = retirer(mA.file);
 				p.dateSortieFile = dateSimulation;
 				// MAJ position et dateEntree machine de p
 				poser(mA, p);
@@ -153,11 +150,11 @@ void simuler_Partie1(int duree, int DA, int SA, int SB, int SC, t_systemePartie1
 			dateSimulation = mA.dpe;*/
 		}
 		// si DPE min dans la machine B
-		if (imin == 3) {
+		else if (imin == MACHINE_B) {
 			dateSimulation = mB.dpe;
 		}
 		// si DPE min dans la machine C
-		if (imin == 4) {
+		else if (imin == MACHINE_C) {
 			dateSimulation = mC.dpe;
 		}
 	}
